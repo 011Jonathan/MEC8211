@@ -72,7 +72,7 @@ plt.show()
 
 
 
-#Verification de code partie D
+#Verification de code partie D et E
 pad.options.display.float_format = "{:.4f}".format  # Set 4 decimal places
 def print_matrix(matrix):
     df = pad.DataFrame(matrix)
@@ -85,16 +85,20 @@ Ce = 20
 S = 2*(10**(-8))
 D = 10**(-10)
 
+
+
 # Fonction analytique
 def C(r):
     return (0.25*S*(1/D)*R**2*(((r**2/R**2)-1))) + Ce
 
-nodes_list = np.linspace(3,103,50)  # Différentes valeurs de noeuds, avec un nombre minimal de noeuds de 3
+nodes_list = np.linspace(3,403,400)  # Différentes valeurs de noeuds, avec un nombre minimal de noeuds de 3
 h_values = []
 errors_L1_D = []
 errors_L2_D = []
 errors_Linf_D = []
-
+errors_L1_E = []
+errors_L2_E = []
+errors_Linf_E = []
 
 for nodes in nodes_list:
     nodes = int(nodes)
@@ -124,7 +128,22 @@ for nodes in nodes_list:
     
     concentration = np.linalg.solve(A, b)
     
+    ## Construction de A_QE
+    for i in range(1, nodes-1):
+        A_QE[i][i-1] = 1/(delta_r**2)-(1/(2*i*delta_r**2))
+        A_QE[i][i] = -2/(delta_r**2)  
+        A_QE[i][i+1] = 1/(delta_r**2)+(1/(2*i*delta_r**2)) 
+        
+    # Ajout des facteurs des noeuds aux frontières
+    # 1er noeud 
+    A_QE[0][0] = -3/(2*delta_r)
+    A_QE[0][1] = 4/(2*delta_r)
+    A_QE[0][2] = -1/(2*delta_r)
 
+    # Dernier noeud
+    A_QE[nodes-1][nodes-1] = 1
+    
+    concentration_QE = np.linalg.solve(A_QE, b)
     
     r_values = np.linspace(0, R, nodes)
     C_exact = np.array([C(r) for r in r_values])
@@ -133,12 +152,17 @@ for nodes in nodes_list:
     error_L2_D = np.sqrt(np.sum((concentration - C_exact)**2))
     error_Linf_D = np.max(np.abs(concentration - C_exact))
     
-
+    error_L1_E = np.sum(np.abs(concentration_QE - C_exact))
+    error_L2_E = np.sqrt(np.sum((concentration_QE - C_exact)**2))
+    error_Linf_E = np.max(np.abs(concentration_QE - C_exact))
     
     errors_L1_D.append(error_L1_D)
     errors_L2_D.append(error_L2_D)
     errors_Linf_D.append(error_Linf_D)
     
+    errors_L1_E.append(error_L1_E)
+    errors_L2_E.append(error_L2_E)
+    errors_Linf_E.append(error_Linf_E)
 
 # Tracé des erreurs
 plt.figure(figsize=(10, 6))
@@ -152,6 +176,17 @@ plt.ylabel("Erreurs")
 plt.legend()
 plt.grid()
 plt.title("Évolution des erreurs en fonction de h question D")
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.loglog(h_values, errors_L1_E, 'r--', label="L1 - Question E")
+plt.loglog(h_values, errors_L2_E, 'b--', label="L2 - Question E")
+plt.loglog(h_values, errors_Linf_E, 'g--', label="Linfini - Question E")
+plt.xlabel("h = R / (nodes - 1)")
+plt.ylabel("Erreurs")
+plt.legend()
+plt.grid()
+plt.title("Évolution des erreurs en fonction de h questionb E")
 plt.show()
 
 
