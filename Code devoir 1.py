@@ -69,9 +69,6 @@ plt.show()
 
 
 
-
-
-
 #Verification de code partie D et E
 pad.options.display.float_format = "{:.4f}".format  # Set 4 decimal places
 def print_matrix(matrix):
