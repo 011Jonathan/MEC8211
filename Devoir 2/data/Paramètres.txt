@@ -1,7 +1,0 @@
-D = 1
-R = D/2
-nodes = 5 # Modifiables
-delta_r = R/(nodes-1)
-Ce = 20
-S = 2*(10**(-8))
-D = 10**(-10)
