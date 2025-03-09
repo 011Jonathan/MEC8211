@@ -4,7 +4,9 @@ import fonction as fonction
 import paramètres as params
 import visualisation as graph
 import numpy as np
+import matplotlib.pyplot as plt
 
+"""
 nodes_list = np.linspace(3, 403, 400).astype(int)
 h_values = params.R / (nodes_list - 1)
 errors_L1_D, errors_L2_D, errors_Linf_D = [], [], []
@@ -28,3 +30,24 @@ for nodes in nodes_list:
 graph.plot_evolution_error(h_values, errors_L1_D, errors_L2_D, errors_Linf_D,"Évolution des erreurs en fonction de h question D")
 graph.plot_evolution_error(h_values, errors_L1_E, errors_L2_E, errors_Linf_E,"Évolution des erreurs en fonction de h question E")
 graph.plot_convergence(h_values, errors_L1_D, errors_L2_D, errors_Linf_D)
+"""
+
+
+"Question f) du devoir 2"
+
+N_tot = 11
+t = 4e9 
+t_mois = int(t / (60*60*24*365/12))
+
+result,time_line = fonction.concentration(N_tot,t_mois,6)
+
+plt.figure(figsize=(10, 7))
+for nodes in range(N_tot):
+    plt.plot(time_line, [ligne[nodes] for ligne in result],label="noeuds "f"{nodes}")
+
+plt.xlabel("Temps [mois]", fontsize=12, fontweight='bold')
+plt.ylabel('Concentration [mol/m^3]', fontsize=12, fontweight='bold')
+plt.title("Évalution de la concentration en fonction du temps pour 11 noeuds", fontsize=14, fontweight='bold')
+plt.legend(loc = 'upper right')
+plt.grid(True, which='both', linestyle='--', linewidth=0.7)
+plt.show()
