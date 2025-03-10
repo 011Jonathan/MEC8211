@@ -1,5 +1,5 @@
 "Ce fichier contient les fonctions de calcul selon différentes méthodes"
-
+from math import *
 import numpy as np
 import paramètres as params
 
@@ -59,3 +59,11 @@ def concentration(nodes,t_wanted,dt):
         time_line.append(int(j/2628000)) #en mois
     
     return result, time_line
+
+def MMS(r,t):
+    """Solution manufacturée"""
+    return ((80 * r**2) - t * (r**2 - params.R**2))
+
+def Terme_source(r,t):
+    """Terme source"""
+    return (params.k * 80 * r**2) + (params.R**2 - r**2) * ( 1 - t * params.k) - params.D_eff * (320 - 4 * t)

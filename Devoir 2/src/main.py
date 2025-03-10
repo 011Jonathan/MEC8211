@@ -3,8 +3,35 @@
 import fonction as fonction
 import paramètres as params
 import visualisation as graph
+from math import *
 import numpy as np
 import matplotlib.pyplot as plt
+
+"""Question b) MMS"""
+r = np.linspace(0,params.R,100)
+t = np.linspace(0,31536000 * 100,100)
+
+r_mms, t_mms = np.meshgrid(r,t)
+C_mms = fonction.MMS(r_mms,t_mms)
+
+plt.contourf(r_mms,t_mms,C_mms)
+plt.colorbar()
+plt.title('Fonction MMS')
+plt.xlabel('Position r')
+plt.ylabel('temps')
+plt.show()
+
+"""Question c) terme source"""
+
+r_source, t_source = np.meshgrid(r,t)
+source = fonction.Terme_source(r_source,t_source)
+
+plt.contourf(r_source,t_source,source)
+plt.colorbar()
+plt.title('Terme source')
+plt.xlabel('Position r')
+plt.ylabel('temps')
+plt.show()
 
 """
 nodes_list = np.linspace(3, 403, 400).astype(int)
