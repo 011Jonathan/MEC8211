@@ -4,7 +4,7 @@ import numpy as np
 import paramètres as params
 
 def concentration_analytique(r, params):
-    """Calcule la concentration analytique."""
+    """Calcule la concentration analytique en régime permanent"""
     return (0.25 * params.S * (1 / params.D_eff) * params.R ** 2 * (((r ** 2 / params.R ** 2) - 1))) + params.Ce
 
 def concentration(nodes,t_wanted,dt):
@@ -16,7 +16,8 @@ def concentration(nodes,t_wanted,dt):
         dt : pas de temps pour les itération [mois]
 
     Sortie:
-        result : matrice contenant la concentration à tous les noeuds pour tous les pas de temps 
+        result : matrice contenant la concentration à tous les noeuds pour tous les pas de temps
+        result_source :  matrice contenant la concentration à tous les noeuds pour tous les pas de temps lors de la rsolution avec le terme source de la MMS
         time_line : vecteur contenant les différents temps    
     """
 
@@ -33,8 +34,10 @@ def concentration(nodes,t_wanted,dt):
     
     A = np.zeros((nodes, nodes))
     B = np.zeros(nodes)
+    B_source = np.zeros(nodes)
     C = np.zeros(nodes)
     result = [[0]*nodes]
+    result_source = [[0]*nodes]
     time_line = [0]
 
     A[0, 0] = -3 
@@ -48,17 +51,28 @@ def concentration(nodes,t_wanted,dt):
         A[i, i] = (2 * D_eff  *dt) / (delta_r ** 2) + k * dt + 1
         A[i, i + 1] = (-D_eff * dt) / (delta_r ** 2) - ((D_eff * dt) / (2 * delta_r * i * delta_r))
     
+    t = 0
     for j in range(0,t_wanted,dt):
         
         for i in range(1, nodes - 1):
             B[i] = C[i]
         B[nodes - 1] = Ce
-        
+
+        for i in range(1,nodes-1):
+            B_source[i] = (1 + time_line[t] * k) * (R**2 - delta_r * i) - D_eff * (320 - 4 * time_line[t]) + 80 * k * (delta_r * i)**2
+        B_source[nodes - 1] = Ce
+
+
         C = np.linalg.solve(A, B)
         result = np.vstack((result,C))
-        time_line.append(int(j/2628000)) #en mois
+
+        C_source = np.linalg.solve(A,B_source)
+        result_source = np.vstack((result_source,C_source))
+
+        time_line.append(int(j)) #en mois
+        t += 1
     
-    return result, time_line
+    return result, result_source, time_line
 
 def MMS(r,t):
     """Solution manufacturée"""
@@ -66,4 +80,4 @@ def MMS(r,t):
 
 def Terme_source(r,t):
     """Terme source"""
-    return (params.k * 80 * r**2) + (params.R**2 - r**2) * ( 1 - t * params.k) - params.D_eff * (320 - 4 * t)
+    return (params.k * 80 * r**2) + (params.R**2 - r**2) * ( 1 + t * params.k) - params.D_eff * (320 - 4 * t)

@@ -66,7 +66,7 @@ N_tot = 11
 t = 4e9 
 t_mois = int(t / (60*60*24*365/12))
 
-result,time_line = fonction.concentration(N_tot,t_mois,6)
+result,r_source,time_line = fonction.concentration(N_tot,t_mois,6)
 
 plt.figure(figsize=(10, 7))
 for nodes in range(N_tot):
