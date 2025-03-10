@@ -78,3 +78,16 @@ plt.title("Évalution de la concentration en fonction du temps pour 11 noeuds", 
 plt.legend(loc = 'upper right')
 plt.grid(True, which='both', linestyle='--', linewidth=0.7)
 plt.show()
+
+
+
+
+# Vérification du nombre de Damköhler
+Da = (params.k*params.R**2) / params.D_eff
+print(f"Nombre de Damköhler Da = {Da}")
+if not (0.1 <= Da <= 10):
+    print("⚠️ Attention : Da est hors de l'intervalle [0.1, 10] !")
+
+
+fonction.Convergence_espace()
+fonction.Convergence_temps()
